@@ -1,6 +1,6 @@
 const helper = require('./helper.js');
 const React = require('react');
-const ReactDom = require('react-dom');
+const ReactDOM = require('react-dom');
 
 const handleLogin = (e) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ const handleSignup = (e) => {
         return false;
     }
 
-    helper.sendPost(e.target.action, {usernmane, pass, pass2});
+    helper.sendPost(e.target.action, {username, pass, pass2});
 
     return false;
 }
@@ -91,7 +91,7 @@ const init = () => {
 
     signupButton.addEventListener('click', (e) => {
         e.preventDefault();
-        ReactDOM.render(<SignupButton />,
+        ReactDOM.render(<SignupWindow />,
             document.getElementById('content'));
         return false;
     });
