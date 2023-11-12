@@ -7,7 +7,6 @@ const router = (app) => {
   console.log('survived line 5');
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
 
-  app.get('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signupPage);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);

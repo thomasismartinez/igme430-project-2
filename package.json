@@ -25,8 +25,8 @@
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.27.5",
     "nodemon": "^2.0.21",
-    "webpack": "^5.76.2",
-    "webpack-cli": "^5.0.1"
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
