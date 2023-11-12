@@ -2,9 +2,9 @@ const controllers = require('./controllers');
 const mid = require('./middleware');
 
 const router = (app) => {
-  console.log('entering jouter.js > router(app)');
+  app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
+
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
-  console.log('survived line 5');
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
 
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
