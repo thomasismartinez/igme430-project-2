@@ -1,0 +1,57 @@
+body {
+    background-color: aquamarine;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#canvasContainer {
+    background-color: blueviolet;
+    padding: 20px;
+    width: fit-content;
+}
+
+/* CHAT FORM */
+#chatForm {
+    margin: 1em;
+    padding: 7px;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 100px;
+    border-color: #aaf;
+    background-color: white;
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+}
+
+#textChatField {
+    border: none;
+    font-weight: bold;
+    width: 500px;
+    color: blue;
+}
+
+#textChatField::placeholder {
+    color: lightblue;
+}
+
+#textChatField:focus {
+    outline: none;
+}
+
+#textChatSubmit {
+    height: 30px;
+    width: 30px;
+    padding: 0;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 100px;
+    border-color: blue;
+    color: blue;
+    background-color: lightblue;
+}

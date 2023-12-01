@@ -2,6 +2,15 @@ const helper = require('./helper.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
+const canvas = require('gameSrc./canvas.js');
+const canvas = require('gameSrc./gameState.js');
+
+let timer;
+
+let userPlayer;
+
+let playerSpeed = 2;
+
 const handleDomo = (e) => {
     e.preventDefault();
     helper.hideError();
@@ -21,19 +30,18 @@ const handleDomo = (e) => {
 
 const DomoForm = (props) => {
     return (
-        <form id="domoForm"
-            onSubmit={handleDomo}
-            name="domoForm"
-            action="/maker"
-            method="POST"
-            className="domoForm"
-        >
-            <label htmlFor='name'>Name</label>
-            <input id='domoName' type='text' name='name' placeholder='Domo Name'/>
-            <label htmlFor='age'>Age</label>
-            <input id='domoAge' type='number' min='0' name='age'/>
-            <input className='makeDomoSubmit' type='submit' value='Make Domo'/>
-        </form>
+        <div id="main">
+        <div id="canvasContainer">
+            <canvas width="600" height="500"></canvas>
+        </div>
+        <div id="controls">
+            <form id="chatForm">
+                <input type="text" name="chatText" id="textChatField" placeholder="Say Something!"></input>
+                <input type="submit" value="➔" id="textChatSubmit"></input>
+            </form>
+            <button id="createPlayerBtn">Create Player</button>
+        </div>
+        </div>
     );
 };
 
@@ -81,14 +89,80 @@ const init = () => {
         document.getElementById('makeDomo')
     );
 
-    ReactDOM.render(
-        <DomoList domos={[]} />,
-        document.getElementById('domos')
-    );
-
-    loadDomosFromServer();
+    // COPY PASTED MESS BEGINS
+    canvas.initCanvas();
+    setupControls();
+    timer = 0;
+    window.requestAnimationFrame(step);
 
     window.onload = init;
 }
 
 window.onload = init;
+
+
+// COPY PASTED MESS CONTINUES
+const setupControls = () => {
+    // create player
+    let drawSqrBtn = document.getElementById('createPlayerBtn');
+    drawSqrBtn.onclick = () => {
+        let newPlayer = new model.Player('player-name', '#f0f', 300, 250);
+        model.players.push(newPlayer);
+        if (model.players.length === 1) {
+            userPlayer = model.players[0];
+        }
+    }
+    // setup chatForm
+    let chatForm = document.getElementById('chatForm');
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let txt = chatForm.elements['chatText'].value;
+        let newTextBubble = new model.TextBubble(userPlayer, txt, timer);
+        model.textBubbles.push(newTextBubble);
+    });
+    // movement control
+    let canvas = document.querySelector("canvas");
+    canvas.addEventListener('mousedown', e => {
+        //get target coordinates
+        const rect = canvas.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+        userPlayer.targetX = x;
+        userPlayer.targetY = y;
+        //set state
+        userPlayer.moving = true;
+        //get movement vector
+        let moveVectorX = x - userPlayer.x;
+        let moveVectorY = y - userPlayer.y;
+        let magnitude = Math.sqrt(Math.pow(moveVectorX, 2) + Math.pow(moveVectorY, 2));
+        userPlayer.moveDirection = [moveVectorX / magnitude, moveVectorY / magnitude];
+    });
+}
+
+const step = () => {
+    canvas.updateCanvas(model);
+    window.requestAnimationFrame(step);
+
+    timer += 0;
+
+    // handle text bubbles
+    for (let i in model.textBubbles) {
+        let bubble = model.textBubbles[i];
+        bubble.age += 1;
+        if (bubble.age > 60*5) { //5 seconds 
+            model.textBubbles.shift();
+        } 
+    }
+    // handle players
+    for (let p in model.players) {
+        let player = model.players[p];
+        // player movement
+        if (player.moving) {
+            userPlayer.x +=  userPlayer.moveDirection[0] * playerSpeed;
+            userPlayer.y +=  userPlayer.moveDirection[1] * playerSpeed;
+            if (Math.abs(userPlayer.x - userPlayer.targetX) < 10 && Math.abs(userPlayer.y - userPlayer.targetY) < 10) {
+                userPlayer.moving = false;
+            }
+        }
+    }
+}

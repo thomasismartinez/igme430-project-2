@@ -17,7 +17,7 @@ const router = require('./router.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 // connect mongoose
-const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/DomoMakerD';
+const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/IGME430Project2';
 mongoose.connect(dbURI).catch((err) => {
   if (err) {
     console.log('Could not connect to database');
@@ -49,7 +49,7 @@ redisClient.connect().then(() => {
       client: redisClient,
     }),
     // hashing seed
-    secret: 'Domo Arigato',
+    secret: 'Club Penguin',
     // only send to database if data changes
     resave: false,
     // wont save uninitialized sessions
