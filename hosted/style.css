@@ -1,4 +1,4 @@
-html, body {
+/*html, body {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -28,7 +28,8 @@ nav:nth-child(1) {
     padding: 5px;
     padding-top: 12px;
     padding-left: 20px;
-    color: white;
+    color: black;
+    background-color: #55acee;
     font-size: 1.3em;
     float: left;
 }
@@ -262,4 +263,4 @@ h3.domoAge {
 
 .domo:last-child {
     margin-bottom:10px;
-}
+}*/
