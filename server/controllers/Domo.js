@@ -33,6 +33,7 @@ const makeDomo = async (req, res) => {
 };
 
 const getDomos = async (req, res) => {
+  console.log('getting domos');
   console.log('entering domos.js > getDomos');
   try {
     const query = { owner: req.session.account._id };

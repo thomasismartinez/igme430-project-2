@@ -6,9 +6,21 @@ const ReactDOM = require('react-dom');
 
 let timer;
 
+let playerSpeed = 2;
+
 let userPlayer;
 
-let playerSpeed = 2;
+let clientPlayerData;
+
+let premium;
+
+const loadClientData = async () => {
+    console.log('entering maker.jsx > loadClientData');
+    const response = await fetch('/getClientData');
+    console.log('got response');
+    const data = await response.json();
+    return data;
+}
 
 const handleDomo = (e) => {
     e.preventDefault();
@@ -27,6 +39,31 @@ const handleDomo = (e) => {
     return false;
 };
 
+const handleRoomCode = (e) => {
+    e.preventDefault();
+    helper.hideError();
+    const code = e.target.querySelector('#rCode').value;
+    if(!code) {
+        helper.handleError('Please enter a room code!');
+    }
+    // if room exists join room
+    // if room does not exist create room
+}
+
+const RoomCodeForm = () => {
+    <form id="roomForm"
+        name="roomForm"
+        onSubmit={handleRoomCode}
+        action="/joinRoom"
+        method="POST"
+        className="mainForm"
+    >
+        <label htmlFor="roomcode">Room Code: </label>
+        <input id="rCode" type="text" name="roomcode"/>
+        <input className="formSubmit" type="submit" value="Sign in"/>
+    </form>
+}
+
 const ScribbleGame = (props) => {
     return (
         <div id="main">
@@ -38,7 +75,6 @@ const ScribbleGame = (props) => {
                 <input type="text" name="chatText" id="textChatField" placeholder="Say Something!"></input>
                 <input type="submit" value="➔" id="textChatSubmit"></input>
             </form>
-            <button id="createPlayerBtn">Create Player</button>
         </div>
         </div>
     );
@@ -81,12 +117,23 @@ const loadDomosFromServer = async () => {
     );
 };
 
-const init = () => {
-    console.log('entering maker.jsx > init()')
+const init = async () => {
+    console.log('entering maker.jsx > init()'); 
     ReactDOM.render(
         <ScribbleGame/>,
         document.getElementById('gameView')
     );
+
+    // get client player data and create client player
+    console.log('getting client data');
+    clientPlayerData = await loadClientData();
+    console.log('creating client character with data: ' + JSON.stringify(clientPlayerData));
+    console.log('name: ' + clientPlayerData["username"])
+    console.log('color: ' + clientPlayerData["color"])
+    console.log('premium: ' + clientPlayerData["premium"])
+    clientPlayerData = new model.Player(clientPlayerData["username"], clientPlayerData["color"], 300, 250);
+    model.players.push(clientPlayerData);
+    userPlayer = model.players[0];
 
     canvas.initCanvas();
     setupControls();
@@ -101,15 +148,6 @@ window.onload = init;
 /// GAME CONTROLS
 ///
 const setupControls = () => {
-    // create player
-    let drawSqrBtn = document.getElementById('createPlayerBtn');
-    drawSqrBtn.onclick = () => {
-        let newPlayer = new model.Player('player-name', '#f0f', 300, 250);
-        model.players.push(newPlayer);
-        if (model.players.length === 1) {
-            userPlayer = model.players[0];
-        }
-    }
     // setup chatForm
     let chatForm = document.getElementById('chatForm');
     chatForm.addEventListener('submit', (e) => {
@@ -167,3 +205,17 @@ const step = () => {
         }
     }
 }
+
+///
+/// SOCKET IO
+///
+
+var socket = io('http://localhost:5000');
+socket.on('greeting-from-server', function (message) {
+    document.body.appendChild(
+        document.createTextNode(message.greeting)
+    );
+    socket.emit('greeting-from-client', {
+        greeting: 'Hello Server'
+    });
+});

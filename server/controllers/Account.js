@@ -12,6 +12,7 @@ const logout = (req, res) => {
 };
 
 const login = (req, res) => {
+  console.log('doing login');
   const username = `${req.body.username}`;
   const pass = `${req.body.pass}`;
 
@@ -67,9 +68,28 @@ const signup = async (req, res) => {
   }
 };
 
+const clientPlayerData = async (req, res) => {
+  console.log('entering Account controller > clientData()');
+  try {
+    const query = { _id: req.session.account._id };
+    console.log('querying id: ' + req.session.account._id);
+    //const docs = await Account.find(query).select('name color premium').lean().exec();
+    const docs = await Account.findOne(query).select('username color premium').lean().exec();
+    
+    console.log("docs: \n" + JSON.stringify(docs));
+    //let resJson = res.json({ playerData: docs });
+    //console.log("res.json: \n" + JSON.stringify(resJson));
+    return res.json(docs);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error retrieving client player data!' });
+  }
+};
+
 module.exports = {
   loginPage,
   login,
   logout,
   signup,
+  clientPlayerData
 };

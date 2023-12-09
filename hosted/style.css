@@ -1,4 +1,4 @@
-/*html, body {
+html, body {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -263,4 +263,4 @@ h3.domoAge {
 
 .domo:last-child {
     margin-bottom:10px;
-}*/
+}

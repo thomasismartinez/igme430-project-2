@@ -32,23 +32,43 @@ export const getMousePosition = (e) => {
 const drawPlayer = (player) => {
     ctx.save();
     ctx.beginPath();
-    ctx.fillStyle = "#ff0000";
+    ctx.fillStyle = player.color;
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 0.3;
     ctx.arc(player.x, player.y, 10, 0, Math.PI*2, false);
     ctx.closePath();
     ctx.fill();
     //ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = 'black';
-    ctx.font = "10px sans-serif";
+    ctx.font = "15px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(player.name, player.x, player.y+20);
+    ctx.fillText(player.name, player.x, player.y+25);
+    ctx.strokeText(player.name, player.x, player.y+25);
     ctx.restore();
 }
 
 export const drawTextBubble = (bubble) => {
     ctx.save();
+    // get text measurements
+    ctx.font = "20px sans-serif";
+    let txtWidth = ctx.measureText(bubble.text).width;
+    let txtHeight = ctx.measureText(bubble.text).height;
+    // draw speech bubble
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.moveTo(bubble.player.x+10, bubble.player.y);
+    ctx.lineTo(bubble.player.x+30, bubble.player.y-20);
+    ctx.lineTo(bubble.player.x+40+txtWidth,  bubble.player.y-20);
+    ctx.lineTo(bubble.player.x+40+txtWidth,  bubble.player.y-20-40);
+    ctx.lineTo(bubble.player.x+20,  bubble.player.y-20-40);
+    ctx.lineTo(bubble.player.x+20,  bubble.player.y-20);
+    ctx.lineTo(bubble.player.x+20, bubble.player.y-20);
+    ctx.lineTo(bubble.player.x+10, bubble.player.y);
+    ctx.stroke();
+    ctx.fill();
+    // draw text
     ctx.fillStyle = 'black';
     ctx.moveTo(bubble.player.x, bubble.player.y);
-    ctx.font = "20px sans-serif";
     ctx.fillText(bubble.text, bubble.player.x+30, bubble.player.y-30);
     ctx.restore();
 }

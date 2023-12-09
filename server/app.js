@@ -12,6 +12,10 @@ const session = require('express-session');
 const RedisStore = require('connect-redis').default;
 const redis = require('redis');
 
+const http = require('http');
+var socketIO = require('socket.io');
+var io;
+
 const router = require('./router.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -66,4 +70,21 @@ redisClient.connect().then(() => {
     if (err) { throw err; }
     console.log(`Listening on port ${port}`);
   });
+
+  // socket.io
+  const server = http.Server(app);
+  server.listen(5000);
+
+  io = socketIO(server);
+
+  io.on('connection', function (socket) {
+    socket.emit('greeting-from-server', {
+        greeting: 'Rub, Rub-a-Dub Yeah'
+    });
+    socket.on('greeting-from-client', function (message) {
+      console.log(message);
+    });
+  });
 });
+
+// socket.io code from https://subscription.packtpub.com/book/data/9781785880865/1/ch01lvl1sec11/creating-an-express-server-with-socket-io
