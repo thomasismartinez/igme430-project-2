@@ -19,24 +19,16 @@
     
   </section>
 
+  <div id="players">
+    <h3>Players:</h1>
+  </div>
+
   <div id="domoMessage" class='hidden'>
     <img id="speech" src="/assets/img/speech.png" alt="speech box"/>
     <h3><span id="errorMessage"></span></h3>
     <img id="domo" src="assets/img/domo.png" alt="domo"/>
   </div>
   <script src="/assets/appBundle.js"></script>
-
-  <!--script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io('http://localhost:5000');
-    socket.on('greeting-from-server', function (message) {
-        document.body.appendChild(
-            document.createTextNode(message.greeting)
-        );
-        socket.emit('greeting-from-client', {
-            greeting: 'Hello Server'
-        });
-    });
-  </script-->
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 </body>
 </html>

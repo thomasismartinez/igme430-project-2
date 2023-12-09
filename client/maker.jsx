@@ -3,6 +3,8 @@ const canvas = require('./canvas.js');
 const model= require('./gameState.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const io = require('socket.io-client');
+const socket = io();
 
 let timer;
 
@@ -15,9 +17,7 @@ let clientPlayerData;
 let premium;
 
 const loadClientData = async () => {
-    console.log('entering maker.jsx > loadClientData');
     const response = await fetch('/getClientData');
-    console.log('got response');
     const data = await response.json();
     return data;
 }
@@ -118,22 +118,22 @@ const loadDomosFromServer = async () => {
 };
 
 const init = async () => {
+
+    // get client player data and create client player
+    clientPlayerData = await loadClientData();
+    clientPlayerData = new model.Player(clientPlayerData["username"], clientPlayerData["color"], 300, 250);
+    console.log('my clients player data: ' + clientPlayerData);
+    model.players.push(clientPlayerData);
+    userPlayer = model.players[0];
+    listPlayer(userPlayer["name"]);
+
+    socketSetup();
+
     console.log('entering maker.jsx > init()'); 
     ReactDOM.render(
         <ScribbleGame/>,
         document.getElementById('gameView')
     );
-
-    // get client player data and create client player
-    console.log('getting client data');
-    clientPlayerData = await loadClientData();
-    console.log('creating client character with data: ' + JSON.stringify(clientPlayerData));
-    console.log('name: ' + clientPlayerData["username"])
-    console.log('color: ' + clientPlayerData["color"])
-    console.log('premium: ' + clientPlayerData["premium"])
-    clientPlayerData = new model.Player(clientPlayerData["username"], clientPlayerData["color"], 300, 250);
-    model.players.push(clientPlayerData);
-    userPlayer = model.players[0];
 
     canvas.initCanvas();
     setupControls();
@@ -155,6 +155,7 @@ const setupControls = () => {
         let txt = chatForm.elements['chatText'].value;
         let newTextBubble = new model.TextBubble(userPlayer, txt, timer);
         model.textBubbles.push(newTextBubble);
+        chatForm.innerHTML = '';
     });
     // movement control
     let canvas = document.querySelector("canvas");
@@ -206,16 +207,15 @@ const step = () => {
     }
 }
 
-///
-/// SOCKET IO
-///
-
-var socket = io('http://localhost:5000');
-socket.on('greeting-from-server', function (message) {
-    document.body.appendChild(
-        document.createTextNode(message.greeting)
-    );
-    socket.emit('greeting-from-client', {
-        greeting: 'Hello Server'
+const socketSetup = () => {
+    socket.emit('send-new-player', clientPlayerData);
+    socket.on('new-player', newPlayerData => {
+        listPlayer(newPlayerData["name"]);
     });
-});
+}
+
+const listPlayer = (playerName) => {
+    let playerCard = document.createElement('div');
+    playerCard.innerHTML = playerName;
+    document.getElementById("players").appendChild(playerCard);
+}

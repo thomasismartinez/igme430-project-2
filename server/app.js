@@ -12,11 +12,9 @@ const session = require('express-session');
 const RedisStore = require('connect-redis').default;
 const redis = require('redis');
 
-const http = require('http');
-var socketIO = require('socket.io');
-var io;
-
 const router = require('./router.js');
+
+const socketSetup = require('./io.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -66,24 +64,12 @@ redisClient.connect().then(() => {
 
   router(app);
 
-  app.listen(port, (err) => {
+  const server = socketSetup(app); // for socket.io
+
+  // app.listen(port, (err) => {
+  server.listen(port, (err) => {
     if (err) { throw err; }
     console.log(`Listening on port ${port}`);
-  });
-
-  // socket.io
-  const server = http.Server(app);
-  server.listen(5000);
-
-  io = socketIO(server);
-
-  io.on('connection', function (socket) {
-    socket.emit('greeting-from-server', {
-        greeting: 'Rub, Rub-a-Dub Yeah'
-    });
-    socket.on('greeting-from-client', function (message) {
-      console.log(message);
-    });
   });
 });
 

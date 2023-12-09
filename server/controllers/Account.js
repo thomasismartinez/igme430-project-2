@@ -72,13 +72,9 @@ const clientPlayerData = async (req, res) => {
   console.log('entering Account controller > clientData()');
   try {
     const query = { _id: req.session.account._id };
-    console.log('querying id: ' + req.session.account._id);
-    //const docs = await Account.find(query).select('name color premium').lean().exec();
+    // const docs = await Account.find(query).select('name color premium').lean().exec();
     const docs = await Account.findOne(query).select('username color premium').lean().exec();
-    
-    console.log("docs: \n" + JSON.stringify(docs));
-    //let resJson = res.json({ playerData: docs });
-    //console.log("res.json: \n" + JSON.stringify(resJson));
+
     return res.json(docs);
   } catch (err) {
     console.log(err);
@@ -91,5 +87,5 @@ module.exports = {
   login,
   logout,
   signup,
-  clientPlayerData
+  clientPlayerData,
 };
