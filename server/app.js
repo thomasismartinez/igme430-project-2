@@ -72,5 +72,3 @@ redisClient.connect().then(() => {
     console.log(`Listening on port ${port}`);
   });
 });
-
-// socket.io code from https://subscription.packtpub.com/book/data/9781785880865/1/ch01lvl1sec11/creating-an-express-server-with-socket-io

@@ -10,6 +10,7 @@ export const initCanvas = () => {
 }
 
 export const updateCanvas = (model) => {
+    ctx.save();
     // white backdrop
     ctx.fillStyle = "#FFF";
     ctx.fillRect(0, 0, 600, 500);
@@ -18,8 +19,9 @@ export const updateCanvas = (model) => {
         drawPlayer(model.players[i]);
     }
     for (let i in model.textBubbles) {
-        drawTextBubble(model.textBubbles[i]);
+        drawTextBubble(model.textBubbles[i], i);
     }
+    ctx.restore();
 }
 
 export const getMousePosition = (e) => {
@@ -46,8 +48,9 @@ const drawPlayer = (player) => {
     ctx.restore();
 }
 
-export const drawTextBubble = (bubble) => {
+export const drawTextBubble = (bubble, i) => {
     ctx.save();
+    ctx.translate(0,-(60 * i));
     // get text measurements
     ctx.font = "20px sans-serif";
     let txtWidth = ctx.measureText(bubble.text).width;

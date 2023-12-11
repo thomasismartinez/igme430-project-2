@@ -1,9 +1,12 @@
 export const players = [];
 
 export class Player {
-    constructor(name, color, x, y) {
+    constructor(id, name, color, age, x, y, socketId) {
+        this.id = id,
+        this.socketId = socketId,
         this.name = name;
         this.color = color;
+        this.age = age;
         this.x = x;
         this.y = y;
         this.moving = false;

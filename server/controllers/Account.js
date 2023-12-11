@@ -3,6 +3,7 @@ const models = require('../models');
 const { Account } = models;
 
 const loginPage = (req, res) => res.render('login');
+const passwordPage = (req, res) => res.render('password');
 
 const logout = (req, res) => {
   // end session
@@ -68,12 +69,48 @@ const signup = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => { /*
+  const username = `${req.body.username}`;
+  const oldPass = `${req.body.oldPass}`;
+  const newPass = `${req.body.newPass}`;
+  const newPass2 = `${req.body.newPass2}`;
+
+  if (!username || !oldPass || !newPass || !newPass2) {
+    return res.status(400).json({ error: 'All fields are required!' });
+  }
+
+  if (newPass !== newPass2) {
+    return res.status(400).json({ error: 'New passwords do not match!' });
+  }
+
+  // try to change password
+  return Account.authenticate(username, oldPass, async (err, account) => {
+    // if error or account doesnt exist
+    if (err || !account) {
+      return res.status(401).json({ error: 'Wrong username and password!' });
+    }
+
+    // try to change password
+    try {
+      const hash = await Account.generateHash(oldPass);
+    } catch (err) {
+      console.log(err);
+      // if username taken
+      if (err.code === 11000) {
+        return res.status(400).json({ error: 'Username already in use!' });
+      }
+      // server side error
+      return res.status(500).json({ error: 'An error occured!' });
+    }
+  });
+*/ };
+
 const clientPlayerData = async (req, res) => {
   console.log('entering Account controller > clientData()');
   try {
     const query = { _id: req.session.account._id };
     // const docs = await Account.find(query).select('name color premium').lean().exec();
-    const docs = await Account.findOne(query).select('username color premium').lean().exec();
+    const docs = await Account.findOne(query).select('_id username color premium createdDate').lean().exec();
 
     return res.json(docs);
   } catch (err) {
@@ -87,5 +124,7 @@ module.exports = {
   login,
   logout,
   signup,
+  changePassword,
   clientPlayerData,
+  passwordPage,
 };

@@ -1,11 +1,8 @@
 const http = require('http');
+// const { disconnect } = require('process');
 const { Server } = require('socket.io');
 
 let io;
-
-const handleChatMessage = (msg) => {
-  io.emit(msg.channel, msg.message);
-};
 
 const socketSetup = (app) => {
   const server = http.createServer(app);
@@ -15,16 +12,24 @@ const socketSetup = (app) => {
     console.log('a user connected');
     socket.emit('user-join');
 
-    socket.on('disconnect', () => {
-      console.log('a user disconnected');
+    socket.on('disconnecting', () => {
+      console.log(`socket id ${socket.id} is disconnecting`);
+      socket.emit('player-disconnecting', socket.id);
     });
 
     socket.on('send-new-player', (playerData) => {
-      console.log(`server recieved: ${playerData}`);
+      //console.log(`new socket id: ${playerData.socketId}`);
       socket.broadcast.emit('new-player', playerData);
     });
-
-    socket.on('chat message', handleChatMessage);
+    socket.on('send-update-new-player', (oldPlayerData) => {
+      socket.broadcast.emit('update-new-player', oldPlayerData);
+    });
+    socket.on('send-chat', (chatData) => {
+      socket.broadcast.emit('chat', chatData);
+    });
+    socket.on('send-player-movement', (playerMovement) => {
+      socket.broadcast.emit('player-movement', playerMovement);
+    });
   });
 
   return server;

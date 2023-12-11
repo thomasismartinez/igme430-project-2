@@ -4,6 +4,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #logo {
@@ -49,12 +50,13 @@ nav:nth-child(1) {
 }
 
 .domoForm {
-    border: 2px solid #338acc;
+    font-size: 20px;
+    border: 2px solid aqua;
     height: 35px;
     width: 700px;
     margin-top:0px;
     padding-top:10px;
-    background-color: #55acee;
+    background-color: aqua;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -207,9 +209,9 @@ nav:nth-child(1) {
     margin: 0 auto;
     margin-top: 2px;
     margin-bottom: 2px;
-    border: 2px solid #55acee;
+    border: 2px solid aqua;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: aqua;
     padding: 10px;
     min-height:60px;
     overflow: hidden;
@@ -217,9 +219,9 @@ nav:nth-child(1) {
 
 .domo:hover {
     transition: border-color 0.2s ease-out;
-    border-color: rgba(255,255,255, 0.8);
+    border-color: rgba(0, 0, 0, 0.8);
     transition: background-color 2.6s ease-out;
-    background-color: #66bfff;
+    background-color: violet;
 }
 
 img.domoFace {
@@ -230,6 +232,7 @@ img.domoFace {
     border-radius: 4px;
     margin-top:10px;
     float:left;
+    border-radius: 1000px;
 }
 
 h3.emptyDomo {
@@ -254,7 +257,7 @@ h3.domoAge {
     width: 100px;
     font-weight: bold;
     padding-right: 40px;
-    font-size: 1.5em;
+    font-size: 1em;
 }
 
 .domo:first-child {

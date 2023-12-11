@@ -4,6 +4,7 @@ const model= require('./gameState.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const io = require('socket.io-client');
+const { forEach } = require('underscore');
 const socket = io();
 
 let timer;
@@ -64,7 +65,7 @@ const RoomCodeForm = () => {
     </form>
 }
 
-const ScribbleGame = (props) => {
+const ScribbleGame = () => {
     return (
         <div id="main">
         <div id="canvasContainer">
@@ -79,6 +80,62 @@ const ScribbleGame = (props) => {
         </div>
     );
 };
+
+const PlayerList = (players) => {
+    const playerNodes = model.players.map(player => {
+        if (player.id === clientPlayerData.id) {
+            return (
+                <div className='domoList'>
+                    <div key={clientPlayerData.name} className='domo' id="account-button">
+                        <img src='/assets/img/pfp.png' alt='domo face' className='domoFace'/>
+                        <h3 className='playerName'> Name:  {clientPlayerData.name}</h3>
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <div key={players.name} className='domo'>
+                <h3 className='playerName'> Name:  {player.name}</h3>
+            </div>
+        );
+    });
+
+    return playerNodes;
+}
+
+const AccountMenu = () => {
+    return (
+        <div class="account-menu-background">
+            <div class="account-menu-body">
+                <h1>{clientPlayerData["name"]}</h1>
+                <h2>Account created: {clientPlayerData["age"]}</h2>
+                <form id="colorForm">
+                    <input type="radio" id="redRadio" name="player-color" value="#F00"></input>
+                    <input type="radio" id="blueRadio" name="player-color" value="#0F0"></input>
+                    <input type="radio" id="greenRadio" name="player-color" value="#00F"></input>
+                    <input type="submit" value="Change Color" id="colorFomSubmit"></input>
+                </form>
+                <button id='premium-button'>Purchase Premium</button>
+                <button id="close-button">Close</button>
+                <a href="/changePassword">Change Password</a>
+                <a href="/logout">Log out</a>
+            </div>
+        </div>
+    );
+}
+
+const SetupAccountMenu = () => {
+    document.getElementById('premium-button').onclick = () => {
+        premium = true;
+        helper.sendPost('/upgradeAccount', clientPlayerData.id);
+    }
+    document.getElementById('close-button').onclick = () => {
+        ReactDOM.render(
+            <div></div>,
+            document.getElementById('overlayMenu')
+        )
+    }
+}
 
 const DomoList = (props) => {
     console.log(props);
@@ -119,20 +176,25 @@ const loadDomosFromServer = async () => {
 
 const init = async () => {
 
+    console.log(socket.id);
+
     // get client player data and create client player
-    clientPlayerData = await loadClientData();
-    clientPlayerData = new model.Player(clientPlayerData["username"], clientPlayerData["color"], 300, 250);
-    console.log('my clients player data: ' + clientPlayerData);
+    data = await loadClientData();
+    clientPlayerData = new model.Player(data["_id"], data["username"], data["color"], data["createdDate"], 300, 250, socket.id);
+    //console.log(JSON.stringify(clientPlayerData));
     model.players.push(clientPlayerData);
     userPlayer = model.players[0];
-    listPlayer(userPlayer["name"]);
 
     socketSetup();
 
-    console.log('entering maker.jsx > init()'); 
     ReactDOM.render(
         <ScribbleGame/>,
         document.getElementById('gameView')
+    );
+
+    ReactDOM.render(
+        <PlayerList/>,
+        document.getElementById('playerList')
     );
 
     canvas.initCanvas();
@@ -155,7 +217,11 @@ const setupControls = () => {
         let txt = chatForm.elements['chatText'].value;
         let newTextBubble = new model.TextBubble(userPlayer, txt, timer);
         model.textBubbles.push(newTextBubble);
-        chatForm.innerHTML = '';
+        chatForm.elements['chatText'].value = '';
+        socket.emit('send-chat', {
+            name: userPlayer.name,
+            txt: txt
+        });
     });
     // movement control
     let canvas = document.querySelector("canvas");
@@ -172,7 +238,23 @@ const setupControls = () => {
         let moveVectorX = x - userPlayer.x;
         let moveVectorY = y - userPlayer.y;
         let magnitude = Math.sqrt(Math.pow(moveVectorX, 2) + Math.pow(moveVectorY, 2));
-        userPlayer.moveDirection = [moveVectorX / magnitude, moveVectorY / magnitude];
+        let dir = [moveVectorX / magnitude, moveVectorY / magnitude];
+        userPlayer.moveDirection = dir;
+        socket.emit('send-player-movement', {
+            name: userPlayer.name,
+            targetX: x,
+            targetY: y,
+            moveDirection: dir
+        });
+    });
+    // account menu botton
+    let accountButton = document.getElementById('account-button');
+    accountButton.addEventListener('mousedown', e => {
+        ReactDOM.render(
+            <AccountMenu/>,
+            document.getElementById('overlayMenu')
+        );
+        SetupAccountMenu();
     });
 }
 
@@ -198,24 +280,87 @@ const step = () => {
         let player = model.players[p];
         // player movement
         if (player.moving) {
-            userPlayer.x +=  userPlayer.moveDirection[0] * playerSpeed;
-            userPlayer.y +=  userPlayer.moveDirection[1] * playerSpeed;
-            if (Math.abs(userPlayer.x - userPlayer.targetX) < 10 && Math.abs(userPlayer.y - userPlayer.targetY) < 10) {
-                userPlayer.moving = false;
+            player.x +=  player.moveDirection[0] * playerSpeed;
+            player.y +=  player.moveDirection[1] * playerSpeed;
+            if (Math.abs(player.x - player.targetX) < 1 && Math.abs(player.y - player.targetY) < 1) {
+                player.moving = false;
             }
         }
     }
 }
 
+///
+/// socket.io control
+///
 const socketSetup = () => {
+    //console.log(clientPlayerData);
     socket.emit('send-new-player', clientPlayerData);
-    socket.on('new-player', newPlayerData => {
-        listPlayer(newPlayerData["name"]);
-    });
-}
 
-const listPlayer = (playerName) => {
-    let playerCard = document.createElement('div');
-    playerCard.innerHTML = playerName;
-    document.getElementById("players").appendChild(playerCard);
+    const addNewPlayer = (newPlayerData) => {
+        let exists = false
+        for(let i in model.players) {
+            let player = model.players[i];
+            if(player.id === newPlayerData.id) {
+                exists = true;
+                model.textBubbles.push(new model.TextBubble(player, chatData.txt, timer));
+            }
+        }
+
+        if (!exists) {
+            model.players.push(new model.Player(
+                newPlayerData["id"], newPlayerData["name"], newPlayerData["color"], newPlayerData["age"], newPlayerData["x"], newPlayerData["y"], newPlayerData["socketId"]));
+            //console.log('adding player: ' + JSON.stringify(newPlayerData));
+            ReactDOM.render(
+                <PlayerList player={model.players}/>,
+                document.getElementById('playerList')
+            );
+        }
+    }
+
+    socket.on('new-player', newPlayerData => {
+        //console.log(newPlayerData["socketId"]);
+        addNewPlayer(newPlayerData);
+        socket.emit('send-update-new-player', {targetId: newPlayerData["id"], data: clientPlayerData});
+    });
+
+    socket.on('update-new-player', updateData => {
+        if (clientPlayerData["id"] === updateData["targetId"]) {
+            addNewPlayer(updateData["data"]);
+        }
+    });
+
+    socket.on('player-movement', moveData => {
+        for(let i in model.players) {
+            let player = model.players[i];
+            if(player.name === moveData.name) {
+                player.moving = true;
+                player.targetX = moveData.targetX;
+                player.targetY = moveData.targetY;
+                player.moveDirection = moveData.moveDirection;
+            }
+        }
+    });
+    
+    socket.on('chat', chatData => {
+        for(let i in model.players) {
+            let player = model.players[i];
+            if(player.name === chatData.name) {
+                model.textBubbles.push(new model.TextBubble(player, chatData.txt, timer));
+            }
+        }
+    });
+
+    //socket.on('disconnect', socket => {
+    //    socket.emit('send-player-disconnect', clientPlayerData["id"]);
+    //})
+
+    socket.on('player-disconnecting', disconnectingId => {
+        console.log(`socket id ${disconnectingId} has disconnected`);
+        for(let i in model.players) {
+            let player = model.players[i];
+            if(player.socketId === disconnectingId) {
+                const x = myArray.splice(i, i);
+            }
+        }
+    })
 }
