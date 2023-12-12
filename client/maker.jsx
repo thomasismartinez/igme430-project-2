@@ -88,7 +88,7 @@ const PlayerList = (players) => {
                 <div className='domoList'>
                     <div key={clientPlayerData.name} className='domo' id="account-button">
                         <img src='/assets/img/pfp.png' alt='domo face' className='domoFace'/>
-                        <h3 className='playerName'> Name:  {clientPlayerData.name}</h3>
+                        <h3 className='playerName'>{clientPlayerData.name}</h3>
                     </div>
                 </div>
             );
@@ -98,9 +98,14 @@ const PlayerList = (players) => {
                 <h3 className='playerName'> Name:  {player.name}</h3>
             </div>
         );
+        
     });
 
-    return playerNodes;
+    return (
+        <div>
+            {playerNodes}
+        </div>
+    );
 }
 
 const AccountMenu = () => {
@@ -359,8 +364,12 @@ const socketSetup = () => {
         for(let i in model.players) {
             let player = model.players[i];
             if(player.socketId === disconnectingId) {
-                const x = myArray.splice(i, i);
+                const x = model.players.splice(i, i);
             }
         }
+        ReactDOM.render(
+            <PlayerList player={model.players}/>,
+            document.getElementById('playerList')
+        );
     })
 }

@@ -60,20 +60,19 @@ const signup = async (req, res) => {
     return res.json({ redirect: '/maker' });
   } catch (err) {
     console.log(err);
-    // if username taken
-    if (err.code === 11000) {
-      return res.status(400).json({ error: 'Username already in use!' });
-    }
     // server side error
     return res.status(500).json({ error: 'An error occured!' });
   }
 };
 
-const changePassword = async (req, res) => { /*
+const changePassword = async (req, res) => {
   const username = `${req.body.username}`;
   const oldPass = `${req.body.oldPass}`;
   const newPass = `${req.body.newPass}`;
   const newPass2 = `${req.body.newPass2}`;
+
+  console.log(`entering Account controller > changePassword`);
+  console.log(JSON.stringify(req.body));
 
   if (!username || !oldPass || !newPass || !newPass2) {
     return res.status(400).json({ error: 'All fields are required!' });
@@ -85,25 +84,29 @@ const changePassword = async (req, res) => { /*
 
   // try to change password
   return Account.authenticate(username, oldPass, async (err, account) => {
-    // if error or account doesnt exist
+    // if error or account doesnt exist or not logged in as correct account
     if (err || !account) {
       return res.status(401).json({ error: 'Wrong username and password!' });
     }
+    console.log('account authenticated, continuing password change process');
 
     // try to change password
     try {
       const hash = await Account.generateHash(oldPass);
+      req.session.account.updateOne(
+        { $set: {"password": hash} }
+      )
     } catch (err) {
-      console.log(err);
+      console.log(err.code);
       // if username taken
-      if (err.code === 11000) {
-        return res.status(400).json({ error: 'Username already in use!' });
-      }
+      //if (err.code === 11000) {
+      //  return res.status(400).json({ error: 'Username already in use!' });
+      //}
       // server side error
       return res.status(500).json({ error: 'An error occured!' });
     }
   });
-*/ };
+};
 
 const clientPlayerData = async (req, res) => {
   console.log('entering Account controller > clientData()');

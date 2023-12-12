@@ -3,6 +3,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 const handleChangePassword = (e) => {
+    console.log('entering passwork.jsx > handleChangePassword()');
     e.preventDefault();
     helper.hideError();
 
@@ -43,9 +44,9 @@ const PasswordChangeWindow = (props) => {
                 <input id="newPass" type="password" name="newPass" placeholder="new password"/>
                 <label htmlFor="pass">New Password: </label>
                 <input id="newPass2" type="password" name="newPass2" placeholder="retype new password"/>
-                <input className="formSubmit" type="submit" value="Change Password"/>
+                <input className="formSubmit" type="submit" value="Change"/>
             </form>
-            <a id="exitPassChange" href="/maker">Cancel</a>
+            <a class='formButton' id="exitPassChange" href="/maker">Cancel</a>
         </div>
     ); //<a id="loginButton" href="/login">Login</a>
 };

@@ -51,12 +51,12 @@ const LoginWindow = (props) => {
                 className="mainForm"
             >
                 <label htmlFor="username">Username: </label>
-                <input id="user" type="text" name="username" placeholder="username"/>
+                <input id="user" type="text" name="username" placeholder="username"/><br/>
                 <label htmlFor="pass">Password: </label>
-                <input id="pass" type="password" name="pass" placeholder="password"/>
+                <input id="pass" type="password" name="pass" placeholder="password"/><br/>
                 <input className="formSubmit" type="submit" value="Sign in"/>
             </form>
-            <button id="signupButton" href="">Make an Account</button>
+            <button class='formButton' id="signupButton" href="">Make an Account</button>
         </div>
     ); //<a id="signupButton" href="/signup">Make an Account</a>
 }
@@ -71,15 +71,15 @@ const SignupWindow = (props) => {
                 method="POST"
                 className="mainForm"
             >
-                <label htmlFor="username">Username: </label>
-                <input id="user" type="text" name="username" placeholder="username"/>
+                <label htmlFor="username">Username:</label>
+                <input id="user" type="text" name="username" placeholder="username"/><br/>
                 <label htmlFor="pass">Password: </label>
-                <input id="pass" type="password" name="pass" placeholder="password"/>
+                <input id="pass" type="password" name="pass" placeholder="password"/><br/>
                 <label htmlFor="pass">Password: </label>
-                <input id="pass2" type="password" name="pass2" placeholder="retype password"/>
+                <input id="pass2" type="password" name="pass2" placeholder="retype password"/><br/>
                 <input className="formSubmit" type="submit" value="Sign in"/>
             </form>
-            <button id="loginButton" href="/login">Already have an Account? - Login</button>
+            <button class="formButton" id="loginButton" href="/login">Already have an Account? - Login</button>
         </div>
     ); //<a id="loginButton" href="/login">Login</a>
 };

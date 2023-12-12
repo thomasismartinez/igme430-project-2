@@ -14,7 +14,7 @@ const socketSetup = (app) => {
 
     socket.on('disconnecting', () => {
       console.log(`socket id ${socket.id} is disconnecting`);
-      socket.emit('player-disconnecting', socket.id);
+      io.emit('player-disconnecting', socket.id);
     });
 
     socket.on('send-new-player', (playerData) => {

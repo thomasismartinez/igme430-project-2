@@ -5,99 +5,25 @@ html, body {
     padding: 0;
     overflow-x: hidden;
     font-family: 'Courier New', Courier, monospace;
+    background-color: antiquewhite;
 }
 
-#logo {
-    height: 40px;
-    width: 40;
-    padding-top: 5px;
-    float:left;
-    border-radius: 8px;
+#accountFormBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-nav {
-    width: 100%;
-    height: 50px;
-    background-color: #55acee;
-}
-
-nav:nth-child(1) {
-    padding-left: 25px;
-}
-
-.navlink {
-    padding: 5px;
-    padding-top: 12px;
-    padding-left: 20px;
-    color: black;
-    background-color: #55acee;
-    font-size: 1.3em;
-    float: left;
-}
-
-.navlink a, .navlink a:link, .navlink a:visited, .navlink a:hover, .navlink a:active {
-    color: white;
-    text-decoration: none;
-    padding: 5px;
-    border-radius: 4px;
-    background-color: #55acee;
-    transition: background-color 0.4s ease;
-}
-
-.navlink a:hover {
-    transition: background-color 0.8s ease;
-    background-color: #66bdff;
-}
-
-.domoForm {
-    font-size: 20px;
-    border: 2px solid aqua;
-    height: 35px;
-    width: 700px;
-    margin-top:0px;
-    padding-top:10px;
-    background-color: aqua;
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
-}
-
-.domoForm label {
-    display: inline-block;
-    width: 75px;
-    margin-left: 10px;
-    font-size: 1.2em;
-    float: left;
-    color: white;
-}
-
-.domoForm input[type=text] {
-    float:left;
-}
-
-.makeDomoSubmit {
-    transition: background-color 0.4s ease;
-    display: inline;
-    width: 90px;
-    background-color: #55acee;
-    border-radius: 2px;
-    color: white;
-    text-decoration: none;
-}
-
-.makeDomoSubmit:link, .makeDomoSubmit:visited, .makeDomoSubmit:hover, .makeDomoSubmit:active {
-    color: white;
-}
-
-.makeDomoSubmit:hover {
-    transition: background-color 0.4s ease;
-    background-color: #338acc;
+.mainLogo {
+    width: 350px;
 }
 
 .mainForm {
-    height: 300px;
-    width: 350px;
-    margin: 0 auto;
-    padding-top: 350px;
+    height: fit-content;
+    width: fit-content;
+    margin: 0;
+    padding-top: 50px;
     font-size: 1.2em;
 }
 
@@ -114,19 +40,22 @@ nav:nth-child(1) {
 }
 
 .formSubmit {
-    transition: background-color 0.4s ease;
+    transition: background-color 0.1s ease;
+    transition: color 0.1x ease;
     display: block;
     text-align: center;
     margin: 0 auto;
     margin-top: 14px;
     font-size: 1.2em;
-    width: 100px;
-    background-color: #55acee;
-    border-radius: 2px;
-    border-color: #66acee;
+    width: 150px;
     padding: 3px 0px;
-    color: white;
     text-decoration: none;
+    background-color: burlywood;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: rgb(47, 39, 28);
+    color: white;
 }
 
 .formSubmit:link, .formSubmit:visited, .formSubmit:hover, .formSubmit:active {
@@ -134,15 +63,37 @@ nav:nth-child(1) {
 }
 
 .formSubmit:hover {
-    transition: background-color 0.4s ease;
-    background-color: #338acc;
+    transition: background-color 0.1s ease;
+    transition: color ;
+    background-color: antiquewhite;
+    color: rgb(47, 39, 28);
 }
 
-#user, #pass, #pass2 {
+.formButton {
+    transition: background-color 0.1s ease;
+    display: block;
     text-align: center;
-    font-size: 1.1em;
+    margin: 0 auto;
+    margin-top: 14px;
+    font-size: 1.2em;
+    width: 150px;
+    padding: 5px 2px;
+    text-decoration: none;
+    background-color: white;
+    border-style: none;
+    border-radius: 2px;
+    color: rgb(47, 39, 28);
+}
+
+.formButton:hover {
+    background-color: rgb(244, 204, 151);
+}
+
+#user, #pass, #pass2, #oldPass, #newPass, #newPass2 {
+    text-align: center;
+    font-size: 1em;
     width: 180px;
-    border-radius: 6px;
+    border-radius: 0px;
 }
 
 #user:focus, #pass:focus, #pass2:focus {
@@ -154,45 +105,11 @@ nav:nth-child(1) {
     display: none;
 }
 
-#domoMessage {
-    top: 250px;
-    width: 250px;
-    height: 650px;
-    position: absolute;
-    z-index: 200;
-    right: 0px;
-    overflow: hidden;
-}
-
-#domoMessage h3 {
-    width: 200px;
-    position: absolute;
-    top: 0px;
-    left: 20px;
-}
-
-#speech {
-    height: 120px;
-    width: 250px;
-    z-index:300;
-}
-
 #errorMessage {
-    font-size: 1.2em;
+    margin: 0 auto;
+    font-size: 1.0em;
     font-weight: bold;
     color: red;
-    font-style: italic;
-}
-
-#domo {
-    z-index: 225;
-    margin-top: -20px;
-    margin-left: 135px;
-    height: 450px;
-    width: 300px;
-    -ms-transform: rotate(330deg);
-    -webkit-transform: rotate(330deg); 
-    transform: rotate(330deg);
 }
 
 #domos {
