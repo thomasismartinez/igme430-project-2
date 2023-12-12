@@ -7,47 +7,21 @@ const io = require('socket.io-client');
 const { forEach } = require('underscore');
 const socket = io();
 
+// gameplay information
 let timer;
-
 let playerSpeed = 2;
-
 let userPlayer;
-
 let clientPlayerData;
-
 let premium;
 
+// gets player data for client player
 const loadClientData = async () => {
     const response = await fetch('/getClientData');
     const data = await response.json();
     return data;
 }
 
-const handleRoomCode = (e) => {
-    e.preventDefault();
-    helper.hideError();
-    const code = e.target.querySelector('#rCode').value;
-    if(!code) {
-        helper.handleError('Please enter a room code!');
-    }
-    // if room exists join room
-    // if room does not exist create room
-}
-
-const RoomCodeForm = () => {
-    <form id="roomForm"
-        name="roomForm"
-        onSubmit={handleRoomCode}
-        action="/joinRoom"
-        method="POST"
-        className="mainForm"
-    >
-        <label htmlFor="roomcode">Room Code: </label>
-        <input id="rCode" type="text" name="roomcode"/>
-        <input className="formSubmit" type="submit" value="Sign in"/>
-    </form>
-}
-
+// returns a game canvas and chat message form
 const ScribbleGame = () => {
     return (
         <div id="main">
@@ -64,6 +38,7 @@ const ScribbleGame = () => {
     );
 };
 
+// returns a div list of all current players in game
 const PlayerList = (players) => {
     const playerNodes = model.players.map(player => {
         if (player.id === clientPlayerData.id) {
@@ -94,6 +69,7 @@ const PlayerList = (players) => {
     );
 }
 
+// shows account of client player
 const AccountMenu = () => {
     return (
         <div class="account-menu-background">
@@ -140,7 +116,9 @@ const AccountMenu = () => {
     );
 }
 
+// sets up controls in account menu
 const SetupAccountMenu = () => {
+    // premium button activates access to premium skins
     document.getElementById('premium-button').onclick = () => {
         premium = true;
         clientPlayerData.premium = true;
@@ -149,6 +127,7 @@ const SetupAccountMenu = () => {
             document.getElementById('overlayMenu')
         );
     }
+    // close button hides menu
     document.getElementById('close-button').onclick = () => {
         ReactDOM.render(
             <div></div>,
@@ -157,6 +136,7 @@ const SetupAccountMenu = () => {
     }
 }
 
+// changes color of player
 const handleColorChange = (e) => {
     console.log('handling color change');
     e.preventDefault();
@@ -170,6 +150,7 @@ const handleColorChange = (e) => {
             // Return the value of the selected radio button
             clientPlayerData.color = radioButtons[i].value;
             console.log(clientPlayerData);
+            // re-render elements that show player avatars
             ReactDOM.render(
                 <AccountMenu/>,
                 document.getElementById('overlayMenu')
@@ -195,18 +176,22 @@ const init = async () => {
     model.players.push(clientPlayerData);
     userPlayer = model.players[0];
 
+    // setup socket.io
     socketSetup();
 
+    // rander game
     ReactDOM.render(
         <ScribbleGame/>,
         document.getElementById('gameView')
     );
 
+    // render list of players
     ReactDOM.render(
         <PlayerList/>,
         document.getElementById('playerList')
     );
 
+    // set up game canvas
     canvas.initCanvas();
     setupControls();
     timer = 0;
@@ -303,10 +288,12 @@ const step = () => {
 /// socket.io control
 ///
 const socketSetup = () => {
-    //console.log(clientPlayerData);
+    // tell other player client has joined
     socket.emit('send-new-player', clientPlayerData);
 
+    // when new player joins
     const addNewPlayer = (newPlayerData) => {
+        // make sure this player isnt already in the game
         let exists = false
         for(let i in model.players) {
             let player = model.players[i];
@@ -315,7 +302,7 @@ const socketSetup = () => {
                 model.textBubbles.push(new model.TextBubble(player, chatData.txt, timer));
             }
         }
-
+        // add player to game
         if (!exists) {
             model.players.push(new model.Player(
                 newPlayerData["id"], newPlayerData["name"], newPlayerData["color"], newPlayerData["age"], newPlayerData["x"], newPlayerData["y"], newPlayerData["socketId"]));
@@ -327,18 +314,21 @@ const socketSetup = () => {
         }
     }
 
+    //  when new player socket joins
     socket.on('new-player', newPlayerData => {
-        //console.log(newPlayerData["socketId"]);
         addNewPlayer(newPlayerData);
+        // tell new player that this client exists
         socket.emit('send-update-new-player', {targetId: newPlayerData["id"], data: clientPlayerData});
     });
 
+    // response from join emit, adds pre-existing players to game
     socket.on('update-new-player', updateData => {
         if (clientPlayerData["id"] === updateData["targetId"]) {
             addNewPlayer(updateData["data"]);
         }
     });
 
+    // player moves
     socket.on('player-movement', moveData => {
         for(let i in model.players) {
             let player = model.players[i];
@@ -351,6 +341,7 @@ const socketSetup = () => {
         }
     });
     
+    // player sends chat
     socket.on('chat', chatData => {
         for(let i in model.players) {
             let player = model.players[i];
@@ -360,6 +351,7 @@ const socketSetup = () => {
         }
     });
 
+    // player changes avatar
     socket.on('color-change', playerData => {
         for(let i in model.players) {
             let player = model.players[i];
@@ -373,10 +365,7 @@ const socketSetup = () => {
         }
     });
 
-    //socket.on('disconnect', socket => {
-    //    socket.emit('send-player-disconnect', clientPlayerData["id"]);
-    //})
-
+    // player leaves
     socket.on('player-disconnecting', disconnectingId => {
         console.log(`socket id ${disconnectingId} has disconnected`);
         for(let i in model.players) {

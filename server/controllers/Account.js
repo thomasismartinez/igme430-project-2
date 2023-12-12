@@ -5,6 +5,7 @@ const { Account } = models;
 const loginPage = (req, res) => res.render('login');
 const passwordPage = (req, res) => res.render('password');
 
+// logut player
 const logout = (req, res) => {
   // end session
   req.session.destroy();
@@ -12,6 +13,7 @@ const logout = (req, res) => {
   res.redirect('/');
 };
 
+// login player
 const login = (req, res) => {
   console.log('doing login');
   const username = `${req.body.username}`;
@@ -36,6 +38,7 @@ const login = (req, res) => {
   });
 };
 
+// signup 
 const signup = async (req, res) => {
   const username = `${req.body.username}`;
   const pass = `${req.body.pass}`;
@@ -65,6 +68,7 @@ const signup = async (req, res) => {
   }
 };
 
+// change password
 const changePassword = async (req, res) => {
   const username = `${req.body.username}`;
   const oldPass = `${req.body.oldPass}`;
@@ -93,7 +97,6 @@ const changePassword = async (req, res) => {
     // try to change password
     try {
       const hash = await Account.generateHash(oldPass);
-      // await Account.updateOne({ _id: req.session.account._id }, { $set: { password: hash } });
 
       // Update the password for the logged-in user
       return await Account.updateOne(
@@ -102,16 +105,12 @@ const changePassword = async (req, res) => {
       );
     } catch (er) {
       console.log(er.code);
-      // if username taken
-      // if (err.code === 11000) {
-      //  return res.status(400).json({ error: 'Username already in use!' });
-      // }
-      // server side error
       return res.status(500).json({ error: 'An error occured!' });
     }
   });
 };
 
+// return the player and account data for the client
 const clientPlayerData = async (req, res) => {
   console.log('entering Account controller > clientData()');
   try {

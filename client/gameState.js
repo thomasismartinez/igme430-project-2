@@ -1,5 +1,4 @@
-export const players = [];
-
+// stores game data for each player in the client
 export class Player {
     constructor(id, name, color, age, x, y, socketId) {
         this.id = id,
@@ -16,6 +15,7 @@ export class Player {
     }
 }
 
+// stores data for each active chat message in game
 export class TextBubble {
     constructor(player, text, startTime) {
         this.player = player;
@@ -25,4 +25,5 @@ export class TextBubble {
     }
 }
 
+export const players = [];
 export const textBubbles = [];

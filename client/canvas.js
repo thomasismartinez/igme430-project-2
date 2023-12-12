@@ -1,6 +1,7 @@
 let ctx;
 let canvas;
 
+// setup canvas
 export const initCanvas = () => {
     canvas = document.querySelector("canvas");
     ctx = canvas.getContext("2d");
@@ -9,21 +10,25 @@ export const initCanvas = () => {
     ctx.fillRect(0, 0, 600, 500);
 }
 
+// animate canvas
 export const updateCanvas = (model) => {
     ctx.save();
     // white backdrop
     ctx.fillStyle = "#FFF";
     ctx.fillRect(0, 0, 600, 500);
 
+    // draw players
     for (let i in model.players) {
         drawPlayer(model.players[i]);
     }
+    // draw text bubbles
     for (let i in model.textBubbles) {
         drawTextBubble(model.textBubbles[i], i);
     }
     ctx.restore();
 }
 
+// return mouse position for player movement
 export const getMousePosition = (e) => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -37,13 +42,6 @@ const drawPlayer = (player) => {
     let avatar = document.createElement("img");
     console.log(player.color);
     avatar.src = `/assets/img/avatars/${player.color}Avatar.png`;
-    //ctx.beginPath();
-    //ctx.fillStyle = player.color;
-    //ctx.strokeStyle = 'black';
-    //ctx.lineWidth = 0.3;
-    //ctx.arc(player.x, player.y, 10, 0, Math.PI*2, false);
-    //ctx.closePath();
-    //ctx.fill();
     ctx.drawImage(avatar, player.x-20, player.y-35.5, 40, 71.1)
     ctx.font = "15px sans-serif";
     ctx.textAlign = "center";
