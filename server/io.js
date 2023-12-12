@@ -18,7 +18,7 @@ const socketSetup = (app) => {
     });
 
     socket.on('send-new-player', (playerData) => {
-      //console.log(`new socket id: ${playerData.socketId}`);
+      // console.log(`new socket id: ${playerData.socketId}`);
       socket.broadcast.emit('new-player', playerData);
     });
     socket.on('send-update-new-player', (oldPlayerData) => {

@@ -71,7 +71,7 @@ const changePassword = async (req, res) => {
   const newPass = `${req.body.newPass}`;
   const newPass2 = `${req.body.newPass2}`;
 
-  console.log(`entering Account controller > changePassword`);
+  console.log('entering Account controller > changePassword');
   console.log(JSON.stringify(req.body));
 
   if (!username || !oldPass || !newPass || !newPass2) {
@@ -93,20 +93,19 @@ const changePassword = async (req, res) => {
     // try to change password
     try {
       const hash = await Account.generateHash(oldPass);
-      //await Account.updateOne({ _id: req.session.account._id }, { $set: { password: hash } });
+      // await Account.updateOne({ _id: req.session.account._id }, { $set: { password: hash } });
 
       // Update the password for the logged-in user
       return await Account.updateOne(
         { _id: req.session.account._id },
-        { $set: { password: hash } }
+        { $set: { password: hash } },
       );
-
-    } catch (err) {
-      console.log(err.code);
+    } catch (er) {
+      console.log(er.code);
       // if username taken
-      //if (err.code === 11000) {
+      // if (err.code === 11000) {
       //  return res.status(400).json({ error: 'Username already in use!' });
-      //}
+      // }
       // server side error
       return res.status(500).json({ error: 'An error occured!' });
     }
@@ -127,16 +126,6 @@ const clientPlayerData = async (req, res) => {
   }
 };
 
-const changeColor = async (req, res) => {
-  console.log('changing color');
-  try {
-    await Account.updateOne({ _id: req.session.account._id }, { $set: { color: req.body.color } });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: 'Error upgrading account' });
-  }
-}
-
 module.exports = {
   loginPage,
   login,
@@ -145,5 +134,4 @@ module.exports = {
   changePassword,
   clientPlayerData,
   passwordPage,
-  changeColor,
 };
