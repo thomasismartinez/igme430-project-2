@@ -46,7 +46,7 @@ const PasswordChangeWindow = (props) => {
                 <input id="newPass2" type="password" name="newPass2" placeholder="retype new password"/>
                 <input className="formSubmit" type="submit" value="Change"/>
             </form>
-            <a class='formButton' id="exitPassChange" href="/maker">Cancel</a>
+            <a class='formButton' id="exitPassChange" href="/game">Cancel</a>
         </div>
     ); //<a id="loginButton" href="/login">Login</a>
 };

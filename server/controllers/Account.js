@@ -32,7 +32,7 @@ const login = (req, res) => {
     req.session.account = Account.toAPI(account);
 
     // otherwise take user to website
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/game' });
   });
 };
 
@@ -57,7 +57,7 @@ const signup = async (req, res) => {
     const newAccount = new Account({ username, password: hash });
     await newAccount.save();
     req.session.account = Account.toAPI(newAccount);
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/game' });
   } catch (err) {
     console.log(err);
     // server side error

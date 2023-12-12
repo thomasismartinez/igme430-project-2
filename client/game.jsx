@@ -23,23 +23,6 @@ const loadClientData = async () => {
     return data;
 }
 
-const handleDomo = (e) => {
-    e.preventDefault();
-    helper.hideError();
-
-    const name = e.target.querySelector('#domoName').value;
-    const age = e.target.querySelector('#domoAge').value;
-
-    if(!name || !age) {
-        helper.handleError('All fields are required!');
-        return false;
-    }
-
-    helper.sendPost(e.target.action, {name, age}, loadDomosFromServer);
-
-    return false;
-};
-
 const handleRoomCode = (e) => {
     e.preventDefault();
     helper.hideError();
@@ -195,47 +178,11 @@ const handleColorChange = (e) => {
                 <PlayerList/>,
                 document.getElementById('playerList')
             );
+            socket.emit('send-color-change', clientPlayerData);
             return;
         }
     }
 }
-
-const DomoList = (props) => {
-    console.log(props);
-    if(props.domos.length === 0) {
-        return (
-            <div className='domoList'>
-                <h3 className='emptyDomo'>No Domos Yet!</h3>
-            </div>
-        );
-    }
-
-    const domoNodes = props.domos.map(domo => {
-        return (
-            <div key={domo._id} className='domo'>
-                <img src='/assets/img/domoface.jpeg' alt='domo face' className='domoFace'/>
-                <h3 className='domoName'> Name:  {domo.name}</h3>
-                <h3 className='domoAge'> Account Created:  {domo.age.toLocaleDateString('en-us', { month:"short", day:"numeric", year:"numeric" })}</h3>
-            </div>
-        );
-    });
-
-    return (
-        <div className='domoList'>
-            {domoNodes}
-        </div>
-    )
-};
-
-const loadDomosFromServer = async () => {
-    console.log('loading domos from server');
-    const response = await fetch('/getDomos');
-    const data = await response.json();
-    ReactDOM.render(
-        <DomoList domos={data.domos}/>,
-        document.getElementById('domos')
-    );
-};
 
 const init = async () => {
 
@@ -409,6 +356,19 @@ const socketSetup = () => {
             let player = model.players[i];
             if(player.name === chatData.name) {
                 model.textBubbles.push(new model.TextBubble(player, chatData.txt, timer));
+            }
+        }
+    });
+
+    socket.on('color-change', playerData => {
+        for(let i in model.players) {
+            let player = model.players[i];
+            if(player.name === playerData.name) {
+                player.color = playerData.color;
+                ReactDOM.render(
+                    <PlayerList/>,
+                    document.getElementById('playerList')
+                );
             }
         }
     });

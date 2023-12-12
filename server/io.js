@@ -30,6 +30,9 @@ const socketSetup = (app) => {
     socket.on('send-player-movement', (playerMovement) => {
       socket.broadcast.emit('player-movement', playerMovement);
     });
+    socket.on('send-color-change', (playerData) => {
+      socket.broadcast.emit('color-change', playerData);
+    });
   });
 
   return server;
