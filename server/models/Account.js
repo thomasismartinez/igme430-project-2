@@ -39,7 +39,7 @@ const AccountSchema = new mongoose.Schema({
   },
   color: {
     type: String,
-    default: '#00F',
+    default: 'black',
   },
   premium: {
     type: Boolean,

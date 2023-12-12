@@ -85,16 +85,19 @@ const PlayerList = (players) => {
     const playerNodes = model.players.map(player => {
         if (player.id === clientPlayerData.id) {
             return (
-                <div className='domoList'>
-                    <div key={clientPlayerData.name} className='domo' id="account-button">
-                        <img src='/assets/img/pfp.png' alt='domo face' className='domoFace'/>
-                        <h3 className='playerName'>{clientPlayerData.name}</h3>
+                <div key={clientPlayerData.name} className='playerNode' id="account-button">
+                    <div class="playerImgContainer">
+                        <img id="clientPlayerAvatarImg" src={`/assets/img/avatars/${clientPlayerData.color}Avatar.png`} width='40'></img>
                     </div>
+                    <h3 className='playerName'>{clientPlayerData.name}</h3>
                 </div>
             );
         }
         return (
-            <div key={players.name} className='domo'>
+            <div key={players.name} className='playerNode'>
+                <div class="playerImgContainer">
+                    <img id="clientPlayerAvatarImg" src={`/assets/img/avatars/${player.color}Avatar.png`} width='40'></img>
+                </div>
                 <h3 className='playerName'> Name:  {player.name}</h3>
             </div>
         );
@@ -114,13 +117,38 @@ const AccountMenu = () => {
             <div class="account-menu-body">
                 <h1>{clientPlayerData["name"]}</h1>
                 <h2>Account created: {clientPlayerData["age"]}</h2>
-                <form id="colorForm">
-                    <input type="radio" id="redRadio" name="player-color" value="#F00"></input>
-                    <input type="radio" id="blueRadio" name="player-color" value="#0F0"></input>
-                    <input type="radio" id="greenRadio" name="player-color" value="#00F"></input>
+                <div class="playerImgContainer">
+                    <img id="clientPlayerAvatarImg" src={`/assets/img/avatars/${clientPlayerData.color}Avatar.png`} width='100'></img>
+                </div>
+                <form id="colorForm"
+                name="colorForm"
+                onSubmit={handleColorChange}
+                //action="/changeColor"
+                //method="POST"
+                >
+                    <label>
+                        <input type="radio" id="blackRadio" name="color" value="black"></input>
+                        <img id="blackAvatarImg" src="/assets/img/avatars/blackAvatar.png" width='50'></img>
+                    </label>
+                    <label>
+                        <input type="radio" id="blueRadio" name="color" value="blue"></input>
+                        <img id="blueAvatarImg" src="/assets/img/avatars/blueAvatar.png" width='50'></img>
+                    </label>
+                    <label>
+                        <input type="radio" id="greenRadio" name="color" value="green"></input>
+                        <img id="greenAvatarImg" src="/assets/img/avatars/greenAvatar.png" width='50'></img>
+                    </label>
+                    <label>
+                        <input type="radio" id="redRadio" name="color" value="red"></input>
+                        <img id="redAvatarImg" src="/assets/img/avatars/redAvatar.png" width='50'></img>
+                    </label>
+                    <label>
+                        <input type="radio" id="goldRadio" name="color" value="gold" disabled={!premium}></input>
+                        <img id="goldAvatarImg" src="/assets/img/avatars/goldAvatar.png" width='50'></img>
+                    </label>
                     <input type="submit" value="Change Color" id="colorFomSubmit"></input>
                 </form>
-                <button id='premium-button'>Purchase Premium</button>
+                <button id='premium-button' disabled={premium}>Purchase Premium</button>
                 <button id="close-button">Close</button>
                 <a href="/changePassword">Change Password</a>
                 <a href="/logout">Log out</a>
@@ -132,13 +160,43 @@ const AccountMenu = () => {
 const SetupAccountMenu = () => {
     document.getElementById('premium-button').onclick = () => {
         premium = true;
-        helper.sendPost('/upgradeAccount', clientPlayerData.id);
+        clientPlayerData.premium = true;
+        ReactDOM.render(
+            <AccountMenu/>,
+            document.getElementById('overlayMenu')
+        );
     }
     document.getElementById('close-button').onclick = () => {
         ReactDOM.render(
             <div></div>,
             document.getElementById('overlayMenu')
         )
+    }
+}
+
+const handleColorChange = (e) => {
+    console.log('handling color change');
+    e.preventDefault();
+    helper.handleError();
+    // code from chatGPT
+    let radioButtons = document.getElementsByName('color');
+    //console.log(JSON.stringify(radioButtons));
+
+    for (var i = 0; i < radioButtons.length; i++) {
+        if (radioButtons[i].checked) {
+            // Return the value of the selected radio button
+            clientPlayerData.color = radioButtons[i].value;
+            console.log(clientPlayerData);
+            ReactDOM.render(
+                <AccountMenu/>,
+                document.getElementById('overlayMenu')
+            );
+            ReactDOM.render(
+                <PlayerList/>,
+                document.getElementById('playerList')
+            );
+            return;
+        }
     }
 }
 
@@ -157,7 +215,7 @@ const DomoList = (props) => {
             <div key={domo._id} className='domo'>
                 <img src='/assets/img/domoface.jpeg' alt='domo face' className='domoFace'/>
                 <h3 className='domoName'> Name:  {domo.name}</h3>
-                <h3 className='domoAge'> Age:  {domo.age}</h3>
+                <h3 className='domoAge'> Account Created:  {domo.age.toLocaleDateString('en-us', { month:"short", day:"numeric", year:"numeric" })}</h3>
             </div>
         );
     });

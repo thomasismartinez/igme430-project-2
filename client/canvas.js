@@ -33,18 +33,22 @@ export const getMousePosition = (e) => {
 
 const drawPlayer = (player) => {
     ctx.save();
-    ctx.beginPath();
-    ctx.fillStyle = player.color;
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 0.3;
-    ctx.arc(player.x, player.y, 10, 0, Math.PI*2, false);
-    ctx.closePath();
-    ctx.fill();
-    //ctx.imageSmoothingEnabled = false;
+    //https://stackoverflow.com/questions/35397728/storing-images-in-javascript-variables
+    let avatar = document.createElement("img");
+    console.log(player.color);
+    avatar.src = `/assets/img/avatars/${player.color}Avatar.png`;
+    //ctx.beginPath();
+    //ctx.fillStyle = player.color;
+    //ctx.strokeStyle = 'black';
+    //ctx.lineWidth = 0.3;
+    //ctx.arc(player.x, player.y, 10, 0, Math.PI*2, false);
+    //ctx.closePath();
+    //ctx.fill();
+    ctx.drawImage(avatar, player.x-20, player.y-35.5, 40, 71.1)
     ctx.font = "15px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(player.name, player.x, player.y+25);
-    ctx.strokeText(player.name, player.x, player.y+25);
+    ctx.fillText(player.name, player.x, player.y+50);
+    ctx.strokeText(player.name, player.x, player.y+50);
     ctx.restore();
 }
 

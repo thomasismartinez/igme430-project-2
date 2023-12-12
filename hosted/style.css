@@ -112,33 +112,25 @@ html, body {
     color: red;
 }
 
-#domos {
-    width: 40%;
-    min-width: 400px;
-    border: 2px solid #55acee;
-    border-radius: 4px;
+.playerNode {
+    width: 150px;
     margin: 0 auto;
-    margin-top: 100px;
-}
-
-.domo {
-    width: 95%;
-    margin: 0 auto;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    border: 2px solid aqua;
-    border-radius: 4px;
-    background-color: aqua;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-style: solid;
+    border-width: 2px;
+    border: 2px solid rgb(47, 39, 28);
+    background-color: rgb(244, 204, 151);
     padding: 10px;
     min-height:60px;
     overflow: hidden;
 }
 
-.domo:hover {
+.playerNode:hover {
     transition: border-color 0.2s ease-out;
     border-color: rgba(0, 0, 0, 0.8);
     transition: background-color 2.6s ease-out;
-    background-color: violet;
+    background-color: antiquewhite;
 }
 
 img.domoFace {

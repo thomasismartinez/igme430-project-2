@@ -93,9 +93,14 @@ const changePassword = async (req, res) => {
     // try to change password
     try {
       const hash = await Account.generateHash(oldPass);
-      req.session.account.updateOne(
-        { $set: {"password": hash} }
-      )
+      //await Account.updateOne({ _id: req.session.account._id }, { $set: { password: hash } });
+
+      // Update the password for the logged-in user
+      return await Account.updateOne(
+        { _id: req.session.account._id },
+        { $set: { password: hash } }
+      );
+
     } catch (err) {
       console.log(err.code);
       // if username taken
@@ -122,6 +127,16 @@ const clientPlayerData = async (req, res) => {
   }
 };
 
+const changeColor = async (req, res) => {
+  console.log('changing color');
+  try {
+    await Account.updateOne({ _id: req.session.account._id }, { $set: { color: req.body.color } });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error upgrading account' });
+  }
+}
+
 module.exports = {
   loginPage,
   login,
@@ -130,4 +145,5 @@ module.exports = {
   changePassword,
   clientPlayerData,
   passwordPage,
+  changeColor,
 };
